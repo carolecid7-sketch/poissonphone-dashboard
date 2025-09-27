@@ -1,0 +1,32 @@
+const supabase = supabase.createClient(
+  "https://cyvyrxckkfropmluwpaz.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5dnlyeGNra2Zyb3BtbHV3cGF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg5MzA3MDcsImV4cCI6MjA3NDUwNjcwN30.OCZoMiaPKQcIPif0lh1P5hVMyJrb5Cs0cye-gn1puGc"
+);
+
+async function chargerViewers() {
+  const { data } = await supabase
+    .from("viewers")
+    .select("*")
+    .order("captures", { ascending: false });
+
+  const container = document.getElementById("viewer-list");
+  container.innerHTML = "";
+
+  data.forEach((v, index) => {
+    const div = document.createElement("div");
+    div.className = "viewer";
+    div.innerHTML = `
+      <h2>#${index + 1} – ${v.name}</h2>
+      <p>🐟 Captures : ${v.captures}</p>
+      <p>🎒 Inventaire : ${v.inventory?.join(", ") || "vide"}</p>
+      <p>🏅 Succès : ${v.success?.join(", ") || "aucun"}</p>
+      <p>📜 Quête : ${v.quest_name || "aucune"} (${v.quest_progress}/${v.quest_goal})</p>
+    `;
+    container.appendChild(div);
+  });
+}
+
+document.getElementById("refresh-btn").addEventListener("click", chargerViewers);
+
+chargerViewers();
+
